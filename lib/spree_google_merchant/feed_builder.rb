@@ -39,7 +39,7 @@ module SpreeGoogleMerchant
       @store = opts[:store] if opts[:store].present?
       @title = @store ? @store.name : Spree::GoogleMerchant::Config[:store_name]
 
-      @domain = @store ? @store.domains.match(/[\w\.]+/).to_s : opts[:path]
+      @domain = @store ? @store.url : opts[:path]
       @domain ||= Spree::GoogleMerchant::Config[:public_domain]
     end
 
