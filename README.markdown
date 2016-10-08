@@ -16,14 +16,14 @@ INSTALLATION
 
 2. Set preferences in spree admin panel (/admin/google_merchant_settings) for the feed title, public domain, feed description, ftp login and password. FTP login is not required - you may schedule upload from the public directory.
 
-3. Issue the command 'rake spree_google_merchant:generate_and_transfer' to generate feed. Verify feed exists (YOUR_APP_ROOT/public/google_merchant.xml).
+3. Issue the command `rake spree_google_merchant:generate_and_transfer` to generate feed. Verify feed exists (YOUR_APP_ROOT/public/google_merchant.xml).
 
 
 ADVANCED CONFIGURATION
 ------------
 
 You can modify fields set for export and list of 'g:' attributes. Look at config/initializers/google_merchant.rb
-You can override values of GOOGLE_MERCHANT_ATTR_MAP and GOOGLE_MERCHANT_FILTERED_ATTRS arrays with help of Array#delete, Array#delete_at, Array#<<, Array#+=, etc.
+You can override values of `GOOGLE_MERCHANT_ATTR_MAP` and `GOOGLE_MERCHANT_FILTERED_ATTRS` arrays with help of Array#delete, Array#delete_at, Array#<<, Array#+=, etc.
 Also you can override methods from product_decorator.rb in your site extension.
 
 
@@ -32,7 +32,7 @@ CRONJOBS
 
 There are two options to regulate Google Merchant product update:
 
-A) Setup cronjobs to run 'rake spree_google_merchant:generate' and 'rake spree_google_merchant:transfer'
+A) Setup cronjobs to run `rake spree_google_merchant:generate` and `rake spree_google_merchant:transfer`
 
 
 Development of this extension is sponsored by [End Point][1] and by [FCP Groton][2].
