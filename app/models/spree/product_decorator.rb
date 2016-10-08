@@ -47,7 +47,7 @@ module Spree
 
     def google_merchant_image_link
       # self.max_image_url
-      images.first.attachment.url(:large)[1..-1] rescue nil
+      images.first.attachment.url(:large) rescue nil
     end
 
     def google_merchant_brand

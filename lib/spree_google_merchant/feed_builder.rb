@@ -114,9 +114,6 @@ module SpreeGoogleMerchant
         xml.channel do
           build_meta(xml)
 
-          # puts ads.to_sql
-          # puts ads.inspect
-
           ads.find_each(:batch_size => 500) do |ad|
             next unless ad && ad.variant && ad.variant.product && validate_record(ad)
             build_feed_item(xml, ad)
@@ -169,7 +166,7 @@ module SpreeGoogleMerchant
 
     def image_url image
       base_url = image.attachment.url(:large)
-      base_url = "#{domain.sub(/\/\Z/, '')}#{base_url}"# unless Spree::Config[:use_s3]
+      base_url = "#{protocol}#{domain.sub(/\/\Z/, '').sub(/\Ahttp:\/\//, '')}#{base_url}"# unless Spree::Config[:use_s3]
 
       base_url
     end
@@ -248,5 +245,8 @@ module SpreeGoogleMerchant
       xml.link @domain
     end
 
+    def protocol
+      'http://'
+    end
   end
 end
