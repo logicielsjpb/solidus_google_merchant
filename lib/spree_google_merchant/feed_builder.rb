@@ -63,6 +63,7 @@ module SpreeGoogleMerchant
 
     def generate_store
       delete_xml_if_exists
+      prepare_ads
 
       File.open(path, 'w') do |file|
         generate_xml file
