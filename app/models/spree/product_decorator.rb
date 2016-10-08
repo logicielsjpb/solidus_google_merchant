@@ -46,7 +46,8 @@ module Spree
     end
 
     def google_merchant_image_link
-      self.max_image_url
+      # self.max_image_url
+      images.first.attachment.url(:large)[1..-1] rescue nil
     end
 
     def google_merchant_brand
@@ -133,7 +134,8 @@ module Spree
     end
     
     def google_merchant_shipping_cost
-      use_fulfiller_fulfillment_cost? ? fulfiller_fulfillment_cost : master.fulfillment_cost
+      # use_fulfiller_fulfillment_cost? ? fulfiller_fulfillment_cost : master.fulfillment_cost
+      0
     end
     
     def use_fulfiller_fulfillment_cost?

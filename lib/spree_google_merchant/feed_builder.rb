@@ -44,7 +44,21 @@ module SpreeGoogleMerchant
     end
 
     def ads
-      Spree::ProductAd.active.in_feed.google_shopping
+      Spree::ProductAd.active.in_feed#.google_shopping
+    end
+
+    def prepare_ads
+      ActiveRecord::Base.transaction do
+        Spree::ProductAd.destroy_all
+
+        Spree::Variant.find_each(batch_size: 100) do |variant|
+          Spree::ProductAd.create!(
+            variant: variant,
+            state: :enabled
+          )
+        end
+      end
+      true
     end
 
     def generate_store
@@ -58,6 +72,7 @@ module SpreeGoogleMerchant
 
     def generate_and_transfer_store
       delete_xml_if_exists
+      prepare_ads
 
       File.open(path, 'w') do |file|
         generate_xml file
@@ -81,9 +96,9 @@ module SpreeGoogleMerchant
 
     def validate_record(ad)
       product = ad.variant.product
-      return false if product.google_merchant_brand.nil?
-      return false if product.respond_to?(:discontinued?) && product.discontinued? && product.google_merchant_quantity <= 0
-      return false unless validate_upc(ad.variant.upc)
+      # return false if product.google_merchant_brand.nil?
+      return false if product.respond_to?(:discontinued?) && product.discontinued?# && product.google_merchant_quantity <= 0
+      # return false unless validate_upc(ad.variant.upc)
       unless product.google_merchant_sale_price.nil?
         return false if product.google_merchant_sale_price_effective.nil?
       end
@@ -91,12 +106,15 @@ module SpreeGoogleMerchant
     end    
     
     def generate_xml output
-      xml = Builder::XmlMarkup.new(:target => output)
+      xml = Builder::XmlMarkup.new(:target => output, indent: 2)
       xml.instruct!
 
       xml.rss(:version => '2.0', :"xmlns:g" => "http://base.google.com/ns/1.0") do
         xml.channel do
           build_meta(xml)
+
+          # puts ads.to_sql
+          # puts ads.inspect
 
           ads.find_each(:batch_size => 500) do |ad|
             next unless ad && ad.variant && ad.variant.product && validate_record(ad)
@@ -150,7 +168,7 @@ module SpreeGoogleMerchant
 
     def image_url image
       base_url = image.attachment.url(:large)
-      base_url = "#{domain}/#{base_url}" unless Spree::Config[:use_s3]
+      base_url = "#{domain}#{base_url}"# unless Spree::Config[:use_s3]
 
       base_url
     end
