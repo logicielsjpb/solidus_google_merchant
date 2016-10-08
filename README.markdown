@@ -23,7 +23,7 @@ ADVANCED CONFIGURATION
 ------------
 
 You can modify fields set for export and list of 'g:' attributes. Look at config/initializers/google_merchant.rb
-You can override values of google_merchant_ATTR_MAP and google_merchant_FILTERED_ATTRS arrays with help of Array#delete, Array#delete_at, Array#<<, Array#+=, etc.
+You can override values of GOOGLE_MERCHANT_ATTR_MAP and GOOGLE_MERCHANT_FILTERED_ATTRS arrays with help of Array#delete, Array#delete_at, Array#<<, Array#+=, etc.
 Also you can override methods from product_decorator.rb in your site extension.
 
 
