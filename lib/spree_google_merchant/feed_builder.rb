@@ -88,7 +88,11 @@ module SpreeGoogleMerchant
     end
 
     def filename
-      "google_merchant_v#{@store.try(:code)}.xml"
+      if Rails.env.development?
+        "google_merchant_test.xml"
+      else
+        "google_merchant_v#{@store.try(:code)}.xml"
+      end
     end
 
     def delete_xml_if_exists
