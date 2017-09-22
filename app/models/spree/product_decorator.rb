@@ -41,7 +41,7 @@ module Spree
 
     def google_merchant_quantity
       @quantity_available ||= begin
-        master.variants.map{|v| v.stock_items.reduce(0){|sum, item|sum + item.count_on_hand}}
+        variants.map{|v| v.stock_items.reduce(0){|sum, item|sum + item.count_on_hand}}.inject(0){|sum,x| sum + x }
       end
     end
 
