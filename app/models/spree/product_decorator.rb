@@ -40,9 +40,8 @@ module Spree
     end
 
     def google_merchant_quantity
-      @quantity_available ||= begin
         variants.map{|v| v.stock_items.reduce(0){|sum, item|sum + item.count_on_hand}}.inject(0){|sum,x| sum + x }
-      end
+
     end
 
     def google_merchant_image_link

@@ -39,12 +39,12 @@ Spree::Variant.class_eval do
 
   # <g:availability> in stock | available for order | out of stock | preorder
   def google_merchant_availability
-    google_merchant_quantity > 0 ? 'in stock' : 'out of stock'
+    product.google_merchant_quantity > 0 ? 'in stock' : 'out of stock'
   end
 
   def google_merchant_quantity
     @quantity_available ||= begin
-      stock_items.reduce(0){|sum, item|sum + item.count_on_hand}
+      product.google_merchant_quantity
     end
   end
 
