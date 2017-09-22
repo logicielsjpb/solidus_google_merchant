@@ -184,7 +184,7 @@ module SpreeGoogleMerchant
     def build_images(xml, product)
       main_image, *more_images = product.master.images
 
-      if main_image
+      if !main_image.empty?
         more_images += product.variants.map(&:images).flatten
       else
         main_image, *more_images = product.variants.map(&:images).flatten
@@ -192,10 +192,10 @@ module SpreeGoogleMerchant
 
 
       return unless main_image
-      xml.tag!('g:image_link', image_url(main_image).sub(/\?.*$/, '').sub(/^\/\//, 'http://'))
+      xml.tag!('g:image_link', main_image.attachment.url(:large))
 
       more_images.each do |image|
-        xml.tag!('g:additional_image_link', image_url(image).sub(/\?.*$/, '').sub(/^\/\//, 'http://'))
+        xml.tag!('g:additional_image_link', mage.attachment.url(:large))
       end
     end
 
