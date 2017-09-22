@@ -18,7 +18,7 @@ module SpreeGoogleMerchant
         ['g:brand', 'brand'],
         ['g:quantity','quantity'],
         ['g:availability', 'availability'],
-        ['g:image_link','image_link'],
+        #['g:image_link','image_link'],
         ['g:google_product_category','product_category'],
         ['g:shipping_weight','shipping_weight'],
         ['g:gender','gender'],
@@ -184,7 +184,7 @@ module SpreeGoogleMerchant
     def build_images(xml, product)
       main_image, *more_images = product.master.images
 
-      if !main_image.empty?
+      if !main_image.blank?
         more_images += product.variants.map(&:images).flatten
       else
         main_image, *more_images = product.variants.map(&:images).flatten
