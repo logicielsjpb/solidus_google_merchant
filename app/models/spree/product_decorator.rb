@@ -25,8 +25,8 @@ module Spree
     end
 
     def google_merchant_product_type
-      return unless taxons.any?
-      taxons[0].self_and_ancestors.map(&:name).join(" > ")
+      return unless taxons.where(taxonomy: '1').any?
+      taxons.where(taxonomy: '1').order(:lft).last.self_and_ancestors.map(&:name).join(" > ")
     end
 
     # <g:condition> new | used | refurbished
@@ -41,7 +41,7 @@ module Spree
 
     def google_merchant_quantity
       @quantity_available ||= begin
-        master.stock_items.reduce(0){|sum, item|sum + item.count_on_hand}
+        master.variants.map{|v| v.stock_items.reduce(0){|sum, item|sum + item.count_on_hand}}
       end
     end
 
@@ -51,7 +51,9 @@ module Spree
     end
 
     def google_merchant_brand
-      self.first_property(:brand)
+      t = self.taxons.where(taxonomy: '2').order(:lft).last
+      return t.name if t
+      ""
     end
 
     # <g:price> 15.00 USD
@@ -89,26 +91,29 @@ module Spree
 
     # <g:gender> Male, Female, Unisex
     def google_merchant_gender
-      value = self.first_property(:gender)
-      return unless value.present?
-      determine_gender(value)
-    end
+      ids = taxons.map(&:self_and_ancestors).flatten.map(&:id).uniq
 
-    def determine_gender(string)
-      if ['girl','women','woman','female'].select{|v|string.downcase.include? v}.any?
-        'female'
-      elsif ['boy','men','man','male'].select{|v|string.downcase.include? v}.any?
+      if ids.include? 3 || ids.include?(254) || ids.include?(227)|| ids.include?(45)
         'male'
+      elsif ids.include? 64 || ids.include?(188) || ids.include?(145)|| ids.include?(7)
+        'female'
       else
         'unisex'
       end
     end
 
+
     # <g:age_group> Adult, Kids
     def google_merchant_age_group
-      value = self.first_property(:agegroup)
-      return unless value.present?
-      value.gsub('Adults','Adult')
+      ids = taxons.map(&:self_and_ancestors).flatten.map(&:id).uniq
+
+      if ids.include? 3 || ids.include?(64)
+        'Adult'
+      elsif ids.include?(254) || ids.include?(188) || ids.include?(145)|| ids.include?(7)|| ids.include?(227)|| ids.include?(45)
+        'Kids'
+      else
+        ''
+      end
     end
 
     # <g:color>
@@ -123,7 +128,7 @@ module Spree
 
     # <g:adwords_grouping> single text value
     def google_merchant_adwords_group
-      self.first_property(:gm_adwords_group)
+      ""
     end
 
     # <g:shipping_weight> # lb, oz, g, kg.
@@ -164,12 +169,12 @@ module Spree
 
     # <g:adult> TRUE | FALSE
     def google_merchant_adult
-      self.first_property(:gm_adult) unless self.first_property(:gm_adult).nil?
+
     end
 
     ## Amazon Listing Methods
     def amazon_category
-      self.first_property(:category)
+
     end
 
     def amazon_title

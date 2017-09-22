@@ -5,6 +5,28 @@ module SpreeGoogleMerchant
     include Spree::Core::Engine.routes.url_helpers
 
     attr_reader :store, :domain, :title
+    SpreeGoogleMerchant::FeedBuilder::GOOGLE_MERCHANT_ATTR_MAP = [
+        ['g:id', 'id'],
+        ['g:gtin','gtin'],
+        ['g:mpn', 'mpn'],
+        ['title', 'title'],
+        ['description', 'description'],
+        ['g:price', 'price'],
+        ['g:sale_price','sale_price'],
+        ['g:condition', 'condition'],
+        ['g:product_type', 'product_type'],
+        ['g:brand', 'brand'],
+        ['g:quantity','quantity'],
+        ['g:availability', 'availability'],
+        ['g:image_link','image_link'],
+        ['g:google_product_category','product_category'],
+        ['g:shipping_weight','shipping_weight'],
+        ['g:gender','gender'],
+        ['g:age_group','age_group'],
+        ['g:color','color'],
+        ['g:size','size'],
+        ['g:adwords_grouping','adwords_group']
+    ]
 
     def self.generate_and_transfer
       self.builders.each do |builder|
@@ -49,13 +71,15 @@ module SpreeGoogleMerchant
 
     def prepare_ads
       ActiveRecord::Base.transaction do
-        Spree::ProductAd.destroy_all
+        Spree::ProductAd.delete_all
 
-        Spree::Variant.find_each(batch_size: 100) do |variant|
+        products = Spree::Product.has_description.in_stock.has_image.has_sku.content_verified
+        Spree::Variant.where(product: products).where(is_master: true).find_each(batch_size: 1000).with_index do |variant, index|
           Spree::ProductAd.create!(
             variant: variant,
             state: :enabled
           )
+          GC::start if index % 200 == 0
         end
       end
       true
@@ -104,9 +128,7 @@ module SpreeGoogleMerchant
       # return false if product.google_merchant_brand.nil?
       return false if product.respond_to?(:discontinued?) && product.discontinued?# && product.google_merchant_quantity <= 0
       # return false unless validate_upc(ad.variant.upc)
-      unless product.google_merchant_sale_price.nil?
-        return false if product.google_merchant_sale_price_effective.nil?
-      end
+
       true
     end    
     
@@ -118,7 +140,7 @@ module SpreeGoogleMerchant
         xml.channel do
           build_meta(xml)
 
-          ads.find_each(:batch_size => 500) do |ad|
+          ads.find_each(batch_size: 50).with_index do |ad, index|
             next unless ad && ad.variant && ad.variant.product && validate_record(ad)
             build_feed_item(xml, ad)
           end
@@ -129,12 +151,14 @@ module SpreeGoogleMerchant
     def transfer_xml
       raise "Please configure your Google Merchant :ftp_username and :ftp_password by configuring Spree::GoogleMerchant::Config" unless
           Spree::GoogleMerchant::Config[:ftp_username] and Spree::GoogleMerchant::Config[:ftp_password]
+      require 'net/sftp'
+      r = Net::SFTP.start('partnerupload.google.com', Spree::GoogleMerchant::Config[:ftp_username], :password => Spree::GoogleMerchant::Config[:ftp_password], port: 19321 ) do |sftp|
+        sftp.upload!(path, filename)
+        puts sftp.inspect
+      end
 
-      ftp = Net::FTP.new('uploads.google.com')
-      ftp.passive = true
-      ftp.login(Spree::GoogleMerchant::Config[:ftp_username], Spree::GoogleMerchant::Config[:ftp_password])
-      ftp.put(path, filename)
-      ftp.quit
+      r
+
     end
 
     def cleanup_xml
@@ -148,7 +172,7 @@ module SpreeGoogleMerchant
         build_images(xml, product)
 
         GOOGLE_MERCHANT_ATTR_MAP.each do |k, v|
-          value = product.send("google_merchant_#{v}")
+          value = ad.variant.send("google_merchant_#{v}")
           xml.tag!(k, value.to_s) if value.present?
         end
         build_shipping(xml, ad)
@@ -159,6 +183,13 @@ module SpreeGoogleMerchant
 
     def build_images(xml, product)
       main_image, *more_images = product.master.images
+
+      if main_image
+        more_images += product.variants.map(&:images).flatten
+      else
+        main_image, *more_images = product.variants.map(&:images).flatten
+      end
+
 
       return unless main_image
       xml.tag!('g:image_link', image_url(main_image).sub(/\?.*$/, '').sub(/^\/\//, 'http://'))
@@ -207,17 +238,7 @@ module SpreeGoogleMerchant
 
       taxon = product.taxons.first
       unless taxon.nil?
-        taxon.self_and_ancestors.each do |taxon|
-          labels << taxon.name
-        end
-      end
-
-      list = [:category,:group,:type,:theme,:keyword,:color,:shape,:brand,:size,:material,:for,:agegroup]
-      list.each do |prop|
-        if labels.length < 10 then
-          value = product.property(prop)
-          labels << value if value.present?
-        end
+        labels = taxon.self_and_ancestors.pluck(:name)
       end
 
       labels.slice(0..9).each do |l|
