@@ -195,7 +195,7 @@ module SpreeGoogleMerchant
       xml.tag!('g:image_link', main_image.attachment.url(:large))
 
       more_images.each do |image|
-        xml.tag!('g:additional_image_link', mage.attachment.url(:large))
+        xml.tag!('g:additional_image_link', image.attachment.url(:large))
       end
     end
 
