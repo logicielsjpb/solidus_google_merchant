@@ -263,6 +263,8 @@ module SpreeGoogleMerchant
         max_cpc = channel.default_max_cpc
       end
       xml.tag!('g:custom_label_1', '%.2f' % max_cpc) if max_cpc
+      xml.tag!('g:custom_label_2', product.custom_field) if product.custom_field
+
     end
 
     def build_meta(xml)
