@@ -264,6 +264,10 @@ module SpreeGoogleMerchant
       end
       xml.tag!('g:custom_label_1', '%.2f' % max_cpc) if max_cpc
       xml.tag!('g:custom_label_2', product.custom_field) if product.custom_field
+      xml.tag!('g:custom_label_3', product.custom_field2) if product.custom_field2
+      xml.tag!('g:custom_label_4', product.custom_field3) if product.custom_field3
+
+
 
     end
 
