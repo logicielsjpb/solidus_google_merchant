@@ -26,7 +26,7 @@ module Spree
 
     def google_merchant_product_type
       return unless taxons.where(taxonomy: '2').any?
-      taxons.where(taxonomy: '2').order(:lft).last.self_and_ancestors.map(&:name).join(" > ")
+      taxons.where(taxonomy: '2').order(:lft).last.self_and_ancestors.skip(1).map(&:name).join(" > ")
     end
 
     # <g:condition> new | used | refurbished
