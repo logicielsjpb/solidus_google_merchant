@@ -59,16 +59,19 @@ Spree::Variant.class_eval do
 
   # <g:price> 15.00 USD
   def google_merchant_price
-    format("%.2f %s", self.price, self.currency).to_s
+    format("%.2f %s", self.price, google_merchant_get_currency()).to_s
   end
 
   # <g:sale_price> 15.00 USD
   def google_merchant_sale_price
     if self.on_sale?
-      format("%.2f %s", self.price, self.currency).to_s
+      format("%.2f %s", self.price, google_merchant_get_currency()).to_s
     end
   end
 
+  def google_merchant_get_currency
+    Spree::Config.currency
+  end
 
   def google_merchant_id
     self.id

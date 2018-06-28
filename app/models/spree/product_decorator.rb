@@ -57,14 +57,18 @@ module Spree
 
     # <g:price> 15.00 USD
     def google_merchant_price
-      format("%.2f %s", self.price, self.currency).to_s
+      format("%.2f %s", self.price, google_merchant_get_currency()).to_s
     end
 
     # <g:sale_price> 15.00 USD
     def google_merchant_sale_price
       unless self.first_property(:gm_sale_price).nil?
-        format("%.2f %s", self.first_property(:gm_sale_price), self.currency).to_s
+        format("%.2f %s", self.first_property(:gm_sale_price), google_merchant_get_currency()).to_s
       end
+    end
+
+    def google_merchant_get_currency
+      Spree::Config.currency
     end
 
     # <g:sale_price_effective_date> 2011-03-01T13:00-0800/2011-03-11T15:30-0800

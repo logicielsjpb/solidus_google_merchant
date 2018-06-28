@@ -73,7 +73,7 @@ module SpreeGoogleMerchant
       ActiveRecord::Base.transaction do
         Spree::ProductAd.delete_all
 
-        products = Spree::Product.has_description.in_stock.has_image.has_sku.content_verified
+        products = Spree::Product.has_description.in_stock.has_image.has_sku
         Spree::Variant.where(product: products).where(is_master: true).find_each(batch_size: 1000).with_index do |variant, index|
           Spree::ProductAd.create!(
             variant: variant,
@@ -263,9 +263,9 @@ module SpreeGoogleMerchant
         max_cpc = channel.default_max_cpc
       end
       xml.tag!('g:custom_label_1', '%.2f' % max_cpc) if max_cpc
-      xml.tag!('g:custom_label_2', product.custom_field) if product.custom_field
-      xml.tag!('g:custom_label_3', product.custom_field2) if product.custom_field2
-      xml.tag!('g:custom_label_4', product.custom_field3) if product.custom_field3
+      #xml.tag!('g:custom_label_2', product.custom_field) if product.custom_field
+      #xml.tag!('g:custom_label_3', product.custom_field2) if product.custom_field2
+      #xml.tag!('g:custom_label_4', product.custom_field3) if product.custom_field3
 
 
 
