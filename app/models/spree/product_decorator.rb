@@ -25,8 +25,8 @@ module Spree
     end
 
     def google_merchant_product_type
-      return unless taxons.where(taxonomy: '2').any?
-      taxons.where(taxonomy: '2').order(:lft).last.self_and_ancestors.to_a.drop(1).map(&:name).join(" > ")
+      return unless taxons.where(taxonomy: '5').any?
+      taxons.where(taxonomy: '5').order(:lft).last.self_and_ancestors.to_a.drop(1).map(&:name).join(" > ")
     end
 
     # <g:condition> new | used | refurbished
@@ -50,7 +50,7 @@ module Spree
     end
 
     def google_merchant_brand
-      t = self.taxons.where(taxonomy: '1').order(:lft).last
+      t = self.taxons.where(taxonomy: '3').order(:lft).last
       return t.name if t
       ""
     end
