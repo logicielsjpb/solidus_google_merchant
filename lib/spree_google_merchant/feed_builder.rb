@@ -73,7 +73,7 @@ module SpreeGoogleMerchant
       ActiveRecord::Base.transaction do
         Spree::ProductAd.delete_all
 
-        products = Spree::Product.has_description.in_stock.has_image.has_sku.content_verified
+        products = Spree::Product.has_description.in_stock.has_image.has_sku
         Spree::Variant.where(product: products).where(is_master: true).find_each(batch_size: 1000).with_index do |variant, index|
           Spree::ProductAd.create!(
             variant: variant,
@@ -99,6 +99,7 @@ module SpreeGoogleMerchant
       delete_xml_if_exists
       prepare_ads
 
+      puts "path is #{path}"
       File.open(path, 'w') do |file|
         generate_xml file
       end
@@ -113,9 +114,9 @@ module SpreeGoogleMerchant
 
     def filename
       if Rails.env.development?
-        "google_merchant_test.xml"
+        "google_merchant_test_#{I18n.locale}.xml"
       else
-        "google_merchant_v#{@store.try(:code)}.xml"
+        "google_merchant_v#{@store.try(:code)}_#{I18n.locale}.xml"
       end
     end
 
@@ -140,8 +141,14 @@ module SpreeGoogleMerchant
         xml.channel do
           build_meta(xml)
 
+          puts "inside generate xml"
+          puts "ads length is #{ads.count}"
+          puts "path is #{path}"
+          puts "filename is #{filename}"
+
           ads.find_each(batch_size: 50).with_index do |ad, index|
             next unless ad && ad.variant && ad.variant.product && validate_record(ad)
+            puts "went into build feed item"
             build_feed_item(xml, ad)
           end
         end
@@ -166,7 +173,12 @@ module SpreeGoogleMerchant
     end
 
     def build_feed_item(xml, ad)
+      puts "inside build feed item"
+      
       product = ad.variant.product
+      
+      puts product
+
       xml.item do
         xml.tag!('link', product_url(product.slug, :host => domain))
         build_images(xml, product)
@@ -179,6 +191,9 @@ module SpreeGoogleMerchant
         build_adwords_labels(xml, ad)
         build_custom_labels(xml, ad)
       end
+
+      puts "xml item is"
+      puts xml.item
     end
 
     def build_images(xml, product)
@@ -263,9 +278,9 @@ module SpreeGoogleMerchant
         max_cpc = channel.default_max_cpc
       end
       xml.tag!('g:custom_label_1', '%.2f' % max_cpc) if max_cpc
-      xml.tag!('g:custom_label_2', product.custom_field) if product.custom_field
-      xml.tag!('g:custom_label_3', product.custom_field2) if product.custom_field2
-      xml.tag!('g:custom_label_4', product.custom_field3) if product.custom_field3
+      #xml.tag!('g:custom_label_2', product.custom_field) if product.custom_field
+      #xml.tag!('g:custom_label_3', product.custom_field2) if product.custom_field2
+      #xml.tag!('g:custom_label_4', product.custom_field3) if product.custom_field3
 
 
 
