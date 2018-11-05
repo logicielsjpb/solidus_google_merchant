@@ -104,7 +104,6 @@ module SpreeGoogleMerchant
       end
 
       transfer_xml
-      cleanup_xml
     end
 
     def path
