@@ -14,7 +14,6 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.requirements << 'none'
 
-  s.add_dependency('spree', '~> 3.0')
   s.add_dependency('net-sftp', '2.1.2')
   # s.add_dependency('spree_page_analytics', '~> 3.0')
 
