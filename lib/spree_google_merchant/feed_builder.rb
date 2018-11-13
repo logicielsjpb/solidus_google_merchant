@@ -94,8 +94,18 @@ module SpreeGoogleMerchant
       end
 
     end
+    def upload_to_aws
+      require 'aws-sdk'
+      s3 = Aws::S3::Resource.new(region:Spree::GoogleMerchant::Config[:s3_region])
+      obj = s3.bucket(Spree::GoogleMerchant::Config[:s3_bucket]).object(filename)
+      obj.upload_file(path, acl: "public-read")
+
+      Spree::LastReport.create(url: obj.public_url)
+
+    end
 
     def generate_and_transfer_store
+
       delete_xml_if_exists
       prepare_ads
 
@@ -104,6 +114,8 @@ module SpreeGoogleMerchant
       end
 
       transfer_xml
+      upload_to_aws
+
       cleanup_xml
     end
 

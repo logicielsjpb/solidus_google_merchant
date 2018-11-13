@@ -10,6 +10,9 @@ module Spree
     # Omit trailing slash when setting
     #
     preference :public_domain, :string
+    preference :save_to_aws, :boolean, :default =>false
+    preference :s3_region, :string, :default =>'us-east-1'
+    preference :s3_bucket, :string
 
     # Amazon product ads preferences
     preference :amazon_sftp_username, :text, :default => ''
