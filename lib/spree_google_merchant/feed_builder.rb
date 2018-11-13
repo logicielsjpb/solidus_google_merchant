@@ -114,13 +114,15 @@ module SpreeGoogleMerchant
       end
 
       transfer_xml
-      upload_to_aws
+      if Spree::GoogleMerchant::Config[:save_to_aws]
+        upload_to_aws
+      end
 
       cleanup_xml
     end
 
     def path
-      "#{::Rails.root}/tmp/#{filename}"
+      "#{::Rails.root}/public/#{filename}"
     end
 
     def filename
