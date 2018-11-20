@@ -196,12 +196,12 @@ module SpreeGoogleMerchant
     end
 
     def build_images(xml, product)
-      main_image, *more_images = product.master.images
+      main_image, *more_images = product.master.images.reorder(position: :asc)
 
       if !main_image.blank?
-        more_images += product.variants.map(&:images).flatten
+        more_images += product.variants.map{|v| v.images.reorder(position: :asc)}.flatten
       else
-        main_image, *more_images = product.variants.map(&:images).flatten
+        main_image, *more_images = product.variants.map{|v| v.images.reorder(position: :asc)}.flatten
       end
 
 
