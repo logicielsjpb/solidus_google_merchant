@@ -100,7 +100,7 @@ module SpreeGoogleMerchant
       obj = s3.bucket(Spree::GoogleMerchant::Config[:s3_bucket]).object(filename)
       obj.upload_file(path, acl: "public-read")
 
-      Spree::LastReport.create(url: obj.public_url)
+      Spree::LastReport.create(url: obj.public_url, locale: I18n.locale)
 
     end
 

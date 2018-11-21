@@ -11,5 +11,6 @@ Spree::Core::Engine.routes.append do
     get '/products/:product_id/product_ads', :to => 'product_ads#index'
   end
   get '/last_report', :to => 'last_reports#show'
+  
 
 end
