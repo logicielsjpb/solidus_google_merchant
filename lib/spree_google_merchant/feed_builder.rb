@@ -194,7 +194,7 @@ module SpreeGoogleMerchant
       puts product
 
       xml.item do
-        xml.tag!('link', product_url(product.slug, :host => domain))
+        xml.tag!('link', product_url(product.slug, :host => domain, locale: I18n.locale))
         build_images(xml, product)
 
         GOOGLE_MERCHANT_ATTR_MAP.each do |k, v|
