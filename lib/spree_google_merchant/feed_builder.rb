@@ -73,7 +73,7 @@ module SpreeGoogleMerchant
       ActiveRecord::Base.transaction do
         Spree::ProductAd.delete_all
 
-        products = Spree::Product.has_description.in_stock.has_image.has_sku
+        products = Spree::Product.has_description.has_image.has_sku
         Spree::Variant.where(product: products).where(is_master: true).find_each(batch_size: 1000).with_index do |variant, index|
           Spree::ProductAd.create!(
             variant: variant,
@@ -194,7 +194,7 @@ module SpreeGoogleMerchant
       puts product
 
       xml.item do
-        xml.tag!('link', product_url(product.slug, :host => domain))
+        xml.tag!('link', product_url(product.slug, :host => domain, locale: I18n.locale))
         build_images(xml, product)
 
         GOOGLE_MERCHANT_ATTR_MAP.each do |k, v|
