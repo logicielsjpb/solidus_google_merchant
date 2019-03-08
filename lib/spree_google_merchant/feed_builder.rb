@@ -73,7 +73,7 @@ module SpreeGoogleMerchant
       ActiveRecord::Base.transaction do
         Spree::ProductAd.delete_all
 
-        products = Spree::Product.has_description.in_stock.has_image.has_sku.content_verified
+        products = Spree::Product.has_sku.has_image.in_stock.content_verified.has_description
         Spree::Variant.where(product: products).where(is_master: true).find_each(batch_size: 1000).with_index do |variant, index|
           Spree::ProductAd.create!(
             variant: variant,
@@ -144,8 +144,8 @@ module SpreeGoogleMerchant
       # return false unless validate_upc(ad.variant.upc)
 
       true
-    end    
-    
+    end
+
     def generate_xml output
       xml = Builder::XmlMarkup.new(:target => output, indent: 2)
       xml.instruct!
