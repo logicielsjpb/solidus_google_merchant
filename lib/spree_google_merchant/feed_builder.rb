@@ -187,7 +187,11 @@ module SpreeGoogleMerchant
 
         GOOGLE_MERCHANT_ATTR_MAP.each do |k, v|
           value = ad.variant.send("google_merchant_#{v}")
-          xml.tag!(k, value.to_s) if value.present?
+          if k === "title" and not Spree::GoogleMerchant::Config[:title_prefix].blank?
+            xml.tag!(k, "#{Spree::GoogleMerchant::Config[:title_prefix]} - #{value.to_s}") if value.present?
+          else
+            xml.tag!(k, value.to_s) if value.present?
+          end
         end
         build_shipping(xml, ad)
         build_adwords_labels(xml, ad)
