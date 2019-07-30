@@ -11,6 +11,7 @@ module Spree
     #
     preference :public_domain, :string
     preference :save_to_aws, :boolean, :default =>false
+    preference :title_prefix, :string
     preference :s3_region, :string, :default =>'us-east-1'
     preference :s3_bucket, :string
 
