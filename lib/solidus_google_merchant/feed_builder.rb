@@ -5,7 +5,7 @@ module SolidusGoogleMerchant
     include Spree::Core::Engine.routes.url_helpers
 
     attr_reader :store, :domain, :title
-    SpreeGoogleMerchant::FeedBuilder::GOOGLE_MERCHANT_ATTR_MAP = [
+    SolidusGoogleMerchant::FeedBuilder::GOOGLE_MERCHANT_ATTR_MAP = [
         ['g:id', 'id'],
         ['g:gtin','gtin'],
         ['g:mpn', 'mpn'],

@@ -15,7 +15,7 @@ class Spree::Admin::GoogleMerchantSettingsController < Spree::Admin::BaseControl
   end
 
   def generate_and_transfer_xml
-    SpreeGoogleMerchant::FeedBuilder.generate_and_transfer
+    SolidusGoogleMerchant::FeedBuilder.generate_and_transfer
 
     redirect_to admin_google_merchant_settings_path, flash: {
       success: 'Wygenerowany plik został pomyślnie wysłany do Google Merchant Center.'
