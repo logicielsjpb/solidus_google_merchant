@@ -8,6 +8,6 @@ module Spree
   end
 end
 
-require 'spree_google_merchant/engine'
+require 'solidus_google_merchant/engine'
 
 
