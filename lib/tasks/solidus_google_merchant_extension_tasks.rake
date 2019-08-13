@@ -8,15 +8,24 @@ namespace :solidus_google_merchant do
   end
 
   task :generate_and_transfer => [:environment] do |t, args|
-    SolidusGoogleMerchant::FeedBuilder.generate_and_transfer
+    I18n.available_locales.each do |l|
+      I18n.locale = l.to_sym
+      SolidusGoogleMerchant::FeedBuilder.generate_and_transfer
+    end
   end
 
   task :generate => [:environment] do |t, args|
-    SolidusGoogleMerchant::FeedBuilder.generate
+    I18n.available_locales.each do |l|
+      I18n.locale = l.to_sym
+      SolidusGoogleMerchant::FeedBuilder.generate
+    end
   end
 
   task :transfer => [:environment] do |t, args|
-    SolidusGoogleMerchant::FeedBuilder.transfer
+    I18n.available_locales.each do |l|
+      I18n.locale = l.to_sym
+      SolidusGoogleMerchant::FeedBuilder.transfer
+    end
   end
 
   task :generate_and_transfer_shipments => [:environment] do |t, args|

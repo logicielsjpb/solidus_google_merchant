@@ -1,4 +1,10 @@
-<h1><%= t("google_merchant.export_settings") %></h1>
+<% content_for :page_title do %>
+  <%= t("google_merchant.export_settings") %>
+<% end %>
+
+<% content_for :page_actions do %>
+  <%= button_link_to 'Generate & transfer XML', generate_and_transfer_xml_admin_google_merchant_settings_path, method: :post, data: { confirm: 'Lista produktów w Goole Merchant Center zostanie nadpisana. Chcesz kontynuować?' }, class: 'btn-success', icon: :add, id: 'admin_generate_and_transfer_xml' %>
+<% end %>
 
 <table>
   <% [:title, :public_domain, :description, :product_category, :ftp_username, :amazon_sftp_username, :ebay_ftp_username, :bing_sftp_username].each do |setting| %>
