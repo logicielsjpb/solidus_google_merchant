@@ -1,7 +1,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'solidus_google_merchant'
-  s.version     = '3.0.0'
+  s.version     = '1.0.0'
   s.summary     = 'Google Merchant for Solidus'
   s.description = 'Provide rake task to generate XML for Google Merchant.'
   s.required_ruby_version = '>= 2.1.0'
