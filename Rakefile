@@ -25,7 +25,7 @@ end
 
 desc "Generates a dummy app for testing"
 task :test_app do
-  ENV['LIB_NAME'] = 'spree_google_merchant'
+  ENV['LIB_NAME'] = 'solidus_google_merchant'
   
   puts 'Installing spree-multi-domain migrations [required for testing]'
   dep_path = `bundle show spree_multi_domain`.chomp
