@@ -8,7 +8,7 @@ GIT
 PATH
   remote: .
   specs:
-    spree_google_merchant (1.0.0)
+    solidus_google_merchant (1.0.0)
       spree (~> 1.0)
 
 GEM
@@ -225,6 +225,6 @@ DEPENDENCIES
   rspec-rails (~> 2.7)
   ruby-debug19
   spree (= 1.0.3)
-  spree_google_merchant!
+  solidus_google_merchant!
   spree_multi_domain!
   sqlite3

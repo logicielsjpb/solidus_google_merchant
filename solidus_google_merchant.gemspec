@@ -7,7 +7,7 @@ Gem::Specification.new do |s|
   s.required_ruby_version = '>= 2.1.0'
 
   s.authors     = ['Steph Skardal', 'Ryan Siddle', 'Roman Smirnov', 'Denis Ivanov', 'Tyler Fitts', 'Kyle Van Wagenen']
-  s.homepage          = 'http://github.com/tfitts/spree_google_merchant'
+  s.homepage          = 'http://github.com/tfitts/solidus_google_merchant'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

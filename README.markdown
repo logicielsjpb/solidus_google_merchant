@@ -16,7 +16,7 @@ INSTALLATION
 
 2. Set preferences in spree admin panel (/admin/google_merchant_settings) for the feed title, public domain, feed description, ftp login and password. FTP login is not required - you may schedule upload from the public directory.
 
-3. Issue the command 'rake spree_google_merchant:generate_and_transfer' to generate feed. Verify feed exists (YOUR_APP_ROOT/public/google_merchant.xml).
+3. Issue the command 'rake solidus_google_merchant:generate_and_transfer' to generate feed. Verify feed exists (YOUR_APP_ROOT/public/google_merchant.xml).
 
 
 ADVANCED CONFIGURATION
@@ -32,7 +32,7 @@ CRONJOBS
 
 There are two options to regulate Google Merchant product update:
 
-A) Setup cronjobs to run 'rake spree_google_merchant:generate' and 'rake spree_google_merchant:transfer'
+A) Setup cronjobs to run 'rake solidus_google_merchant:generate' and 'rake solidus_google_merchant:transfer'
 
 
 Development of this extension is sponsored by [End Point][1] and by [FCP Groton][2].

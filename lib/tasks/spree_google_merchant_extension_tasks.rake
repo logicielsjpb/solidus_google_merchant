@@ -1,6 +1,6 @@
 require 'net/ftp'
 
-namespace :spree_google_merchant do
+namespace :solidus_google_merchant do
 
   task :update_cpc_values => [:environment] do |t, args|
     cpc_manager = Spree::CpcManager.new
