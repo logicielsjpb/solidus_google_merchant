@@ -1,6 +1,5 @@
 module Spree
   Product.class_eval do
-    scope :google_merchant_scope, -> {includes(:taxons, {:master => :images}).includes(:product_properties)}
     scope :amazon_ads, -> {joins([{:product_properties => :property}, {:master => :stock_items}]).where("not (spree_properties.name = 'brand' and spree_product_properties.value = 'Loftus') and spree_stock_items.count_on_hand <> 0").where("spree_variants.image_size >= 500").includes(:taxons, {:master => [:images, :stock_items]}).includes(:product_properties).group(:id)}
     scope :ebay_ads, -> {joins([{:product_properties => :property}, {:master => :stock_items}]).where("spree_stock_items.count_on_hand <> 0").where("spree_variants.image_size >= 300").includes(:taxons, {:master => [:images, :stock_items]}).includes(:product_properties).group(:id)}
 
@@ -26,8 +25,8 @@ module Spree
     end
 
     def google_merchant_product_type
-      return unless taxons.any?
-      taxons[0].self_and_ancestors.map(&:name).join(" > ")
+      return unless taxons.where(taxonomy: '5').any?
+      taxons.where(taxonomy: '5').order(:lft).last.self_and_ancestors.to_a.drop(1).map(&:name).join(" > ")
     end
 
     # <g:condition> new | used | refurbished
@@ -37,31 +36,39 @@ module Spree
 
     # <g:availability> in stock | available for order | out of stock | preorder
     def google_merchant_availability
-      self.master.stock_items.sum(:count_on_hand) > 0 ? 'in stock' : 'out of stock'
+      google_merchant_quantity > 0 ? 'in stock' : 'out of stock'
     end
 
     def google_merchant_quantity
-      self.master.stock_items.sum(:count_on_hand)
+        variants.map{|v| v.stock_items.reduce(0){|sum, item|sum + item.count_on_hand}}.inject(0){|sum,x| sum + x }
+
     end
 
     def google_merchant_image_link
-      self.max_image_url
+      # self.max_image_url
+      images.first.attachment.url(:large) rescue nil
     end
 
     def google_merchant_brand
-      self.first_property(:brand)
+      t = self.taxons.where(taxonomy: '3').order(:lft).last
+      return t.name if t
+      ""
     end
 
     # <g:price> 15.00 USD
     def google_merchant_price
-      format("%.2f %s", self.price, self.currency).to_s
+      format("%.2f %s", self.price, google_merchant_get_currency()).to_s
     end
 
     # <g:sale_price> 15.00 USD
     def google_merchant_sale_price
       unless self.first_property(:gm_sale_price).nil?
-        format("%.2f %s", self.first_property(:gm_sale_price), self.currency).to_s
+        format("%.2f %s", self.first_property(:gm_sale_price), google_merchant_get_currency()).to_s
       end
+    end
+
+    def google_merchant_get_currency
+      Spree::Config.currency
     end
 
     # <g:sale_price_effective_date> 2011-03-01T13:00-0800/2011-03-11T15:30-0800
@@ -77,7 +84,7 @@ module Spree
 
     # <g:gtin> 8-, 12-, or 13-digit number (UPC, EAN, JAN, or ISBN)
     def google_merchant_gtin
-      self.master.gtin rescue self.upc
+      self.master.try(:gtin) || self.master.try(:upc)
     end
 
     # <g:mpn> Alphanumeric characters
@@ -87,26 +94,29 @@ module Spree
 
     # <g:gender> Male, Female, Unisex
     def google_merchant_gender
-      value = self.first_property(:gender)
-      return unless value.present?
-      determine_gender(value)
-    end
+      ids = taxons.map(&:self_and_ancestors).flatten.map(&:id).uniq
 
-    def determine_gender(string)
-      if ['girl','women','woman','female'].select{|v|string.downcase.include? v}.any?
-        'female'
-      elsif ['boy','men','man','male'].select{|v|string.downcase.include? v}.any?
+      if ids.include? 3 || ids.include?(254) || ids.include?(227)|| ids.include?(45)
         'male'
+      elsif ids.include? 64 || ids.include?(188) || ids.include?(145)|| ids.include?(7)
+        'female'
       else
         'unisex'
       end
     end
 
+
     # <g:age_group> Adult, Kids
     def google_merchant_age_group
-      value = self.first_property(:agegroup)
-      return unless value.present?
-      value.gsub('Adults','Adult')
+      ids = taxons.map(&:self_and_ancestors).flatten.map(&:id).uniq
+
+      if ids.include? 3 || ids.include?(64)
+        'Adult'
+      elsif ids.include?(254) || ids.include?(188) || ids.include?(145)|| ids.include?(7)|| ids.include?(227)|| ids.include?(45)
+        'Kids'
+      else
+        ''
+      end
     end
 
     # <g:color>
@@ -121,7 +131,7 @@ module Spree
 
     # <g:adwords_grouping> single text value
     def google_merchant_adwords_group
-      self.first_property(:gm_adwords_group)
+      ""
     end
 
     # <g:shipping_weight> # lb, oz, g, kg.
@@ -132,7 +142,8 @@ module Spree
     end
     
     def google_merchant_shipping_cost
-      use_fulfiller_fulfillment_cost? ? fulfiller_fulfillment_cost : master.fulfillment_cost
+      # use_fulfiller_fulfillment_cost? ? fulfiller_fulfillment_cost : master.fulfillment_cost
+      0
     end
     
     def use_fulfiller_fulfillment_cost?
@@ -161,12 +172,12 @@ module Spree
 
     # <g:adult> TRUE | FALSE
     def google_merchant_adult
-      self.first_property(:gm_adult) unless self.first_property(:gm_adult).nil?
+
     end
 
     ## Amazon Listing Methods
     def amazon_category
-      self.first_property(:category)
+
     end
 
     def amazon_title
@@ -190,7 +201,7 @@ module Spree
     end
 
     def amazon_upc
-      self.upc
+      self.master.upc
     end
 
     def amazon_brand
@@ -322,7 +333,7 @@ module Spree
     end
 
     def ebay_upc
-      self.upc
+      self.master.upc
     end
 
     def ebay_shipping_rate
@@ -330,7 +341,7 @@ module Spree
     end
 
     def ebay_original_price
-      self.msrp
+      self.master.msrp
     end
 
     def ebay_brand
@@ -399,7 +410,7 @@ module Spree
     end
 
     def bing_upc
-      self.upc
+      self.master.upc
     end
 
     def bing_sku

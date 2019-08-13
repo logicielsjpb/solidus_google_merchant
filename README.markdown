@@ -1,3 +1,5 @@
+This branch is for a specific project. DO NOT USE.
+
 SolidusGoogleMerchant
 ===============
 
