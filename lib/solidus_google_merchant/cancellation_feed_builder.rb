@@ -1,4 +1,4 @@
-module SpreeGoogleMerchant
+module SolidusGoogleMerchant
   class CancellationFeedBuilder < FeedBuilder
 
     @@reason_map = {

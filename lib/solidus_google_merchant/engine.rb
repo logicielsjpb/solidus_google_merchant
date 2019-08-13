@@ -1,4 +1,4 @@
-module SpreeGoogleMerchant
+module SolidusGoogleMerchant
   class Engine < Rails::Engine
     engine_name 'spree_google_merchant'
 
@@ -8,7 +8,7 @@ module SpreeGoogleMerchant
       Spree::GoogleMerchant::Config = Spree::GoogleMerchantConfiguration.new
 
       # See http://support.google.com/merchants/bin/answer.py?hl=en&answer=188494#US for all other fields
-      SpreeGoogleMerchant::FeedBuilder::GOOGLE_MERCHANT_ATTR_MAP = [
+      SolidusGoogleMerchant::FeedBuilder::GOOGLE_MERCHANT_ATTR_MAP = [
           ['g:id', 'id'],
           ['g:gtin','gtin'],
           ['g:mpn', 'mpn'],
@@ -34,7 +34,7 @@ module SpreeGoogleMerchant
       ]
     end
 
-    # SpreeGoogleMerchant::AmazonFeedBuilder::AMAZON_NODE_MAP = {
+    # SolidusGoogleMerchant::AmazonFeedBuilder::AMAZON_NODE_MAP = {
     #   "group:Costumes" => {
     #     "gender:Boys" => 727631011,
     #     "gender:Girls" => 727632011,

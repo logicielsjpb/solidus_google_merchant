@@ -1,6 +1,6 @@
 require 'net/ftp'
 
-module SpreeGoogleMerchant
+module SolidusGoogleMerchant
   class FeedBuilder
     include Spree::Core::Engine.routes.url_helpers
 

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe SpreeGoogleMerchant::FeedBuilder do
+describe SolidusGoogleMerchant::FeedBuilder do
   
   describe 'as class' do
     context '#builders should return an array for each store' do
@@ -8,7 +8,7 @@ describe SpreeGoogleMerchant::FeedBuilder do
       Factory :store, :domains => 'www.mystore.com', :code => 'first', :name => 'Goodies, LLC'
       Factory :store, :domains => 'www.anotherstore.com', :code => 'second', :name => 'Gifts, LLC'
 
-      builders = SpreeGoogleMerchant::FeedBuilder.builders
+      builders = SolidusGoogleMerchant::FeedBuilder.builders
       builders.size.should == 2
     end
   end
@@ -20,7 +20,7 @@ describe SpreeGoogleMerchant::FeedBuilder do
         Spree::GoogleMerchant::Config.set(:public_domain => 'http://mydomain.com')
         Spree::GoogleMerchant::Config.set(:store_name => 'Froggies')
        
-        @builder = SpreeGoogleMerchant::FeedBuilder.new
+        @builder = SolidusGoogleMerchant::FeedBuilder.new
         @xml = Builder::XmlMarkup.new(:target => @output, :indent => 2, :margin => 1)
         @product = Factory(:product)
       end
@@ -46,7 +46,7 @@ describe SpreeGoogleMerchant::FeedBuilder do
       before(:each) do
         @store = Factory :store, :domains => 'www.mystore.com', :code => 'first', :name => 'Goodies, LLC'
         @store2 = Factory :store, :domains => 'www.anotherstore.com', :code => 'second', :name => 'Gifts, LLC'
-        @builder = SpreeGoogleMerchant::FeedBuilder.new(:store => @store)
+        @builder = SolidusGoogleMerchant::FeedBuilder.new(:store => @store)
       end
       
       it "should know its path relative to the store" do
@@ -92,7 +92,7 @@ describe SpreeGoogleMerchant::FeedBuilder do
         Spree::GoogleMerchant::Config.set(:public_domain => 'http://mydomain.com')
         Spree::GoogleMerchant::Config.set(:store_name => 'Froggies')
         
-        @builder = SpreeGoogleMerchant::FeedBuilder.new
+        @builder = SolidusGoogleMerchant::FeedBuilder.new
       end
       
       it "should know its path" do
@@ -125,7 +125,7 @@ describe SpreeGoogleMerchant::FeedBuilder do
   
   describe 'when misconfigured' do
     it 'should raise an exception' do
-      SpreeGoogleMerchant::FeedBuilder.new.should raise_error
+      SolidusGoogleMerchant::FeedBuilder.new.should raise_error
     end
   end
   

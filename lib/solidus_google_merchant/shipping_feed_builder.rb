@@ -1,4 +1,4 @@
-module SpreeGoogleMerchant
+module SolidusGoogleMerchant
   class ShippingFeedBuilder < FeedBuilder
 
     def filename

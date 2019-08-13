@@ -1,6 +1,6 @@
 require 'net/sftp'
 
-module SpreeGoogleMerchant
+module SolidusGoogleMerchant
   class BingFeedBuilder < FeedBuilder
 
     @@feed_attributes = [

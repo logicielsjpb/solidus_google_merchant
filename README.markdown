@@ -1,4 +1,4 @@
-SpreeGoogleMerchant
+SolidusGoogleMerchant
 ===============
 
 This extension allows you to use Google Merchant to list products for free that will appear in Google Product Search (http://www.google.com/shopping).

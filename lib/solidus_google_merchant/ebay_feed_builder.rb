@@ -1,6 +1,6 @@
 require 'net/sftp'
 
-module SpreeGoogleMerchant
+module SolidusGoogleMerchant
   class EbayFeedBuilder < FeedBuilder
 
     @@feed_attributes = [
