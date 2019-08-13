@@ -1,8 +1,8 @@
 module Spree
   module Admin
     class ProductAdsController < ResourceController
-      before_filter :load_product
-      before_filter :load_channel
+      before_action :load_product
+      before_action :load_channel
 
       def index
         if @product
